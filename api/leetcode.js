@@ -1,23 +1,24 @@
 import fetch from "node-fetch";
 
-const GRAPHQL_URL = "https://leetcode.com/graphql";
-
 export default async function handler(req, res) {
   const { username } = req.query;
-
+  
   if (!username) {
-    return res.status(400).json({ error: "Username is required" });
+    return res.status(400).json({ error: "Missing username" });
   }
 
+  const GRAPHQL_URL = "https://leetcode.com/graphql";
+  
   const query = `
     query getUserProfile($username: String!) {
       matchedUser(username: $username) {
         username
         profile {
-          reputation
-          ranking
+          realName
+          userAvatar
+          aboutMe
         }
-        submitStats {
+        submitStatsGlobal {
           acSubmissionNum {
             difficulty
             count
@@ -30,9 +31,7 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(GRAPHQL_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         query,
         variables: { username },
@@ -40,13 +39,8 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-
-    if (!data.data?.matchedUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.status(200).json(data.data);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch data", details: error.message });
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch data" });
   }
 }
