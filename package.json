@@ -1,0 +1,11 @@
+{
+  "name": "leetcode-api",
+  "version": "1.0.0",
+  "main": "api.js",
+  "scripts": {
+    "dev": "node api.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
